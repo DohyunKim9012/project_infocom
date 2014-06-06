@@ -17,9 +17,11 @@ public class WiFiService extends Service {
 	
 	// Binder given to clients
     private final IBinder wifiBinder = new WifiBinder();
+    
     // WiFi
     private WifiManager wifiManager;
     private List<ScanResult> scanResultList;
+    
     // Thread
     private boolean endThread;
     private BackgroundTask backgroundTask;
@@ -66,14 +68,12 @@ public class WiFiService extends Service {
 
 		@Override
 		protected void onPreExecute() {
-			// TODO Auto-generated method stub
 			super.onPreExecute();
 			Log.i("WiFiService", "BackgroundTask/onPreExecute");
 		}
 
 		@Override
 		protected Void doInBackground(String... params) {
-			// TODO Auto-generated method stub
 			Log.i("WiFiService", "BackgroundTask/doInBackground");
 			
 			while(true) {
@@ -93,7 +93,6 @@ public class WiFiService extends Service {
 
 		@Override
 		protected void onProgressUpdate(String... values) {
-			// TODO Auto-generated method stub
 			super.onProgressUpdate(values);
 			Log.i("WiFiService", "BackgroundTask/onProgressUpdate");
 			

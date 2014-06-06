@@ -5,11 +5,15 @@
     <string name="hello_world">Hello world!</string>
     <string name="empty">Null Data</string>
     <string name="reset">Reset</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
     <string name="capabilities">capabilities</string>
     <string name="frequency">frequency</string>
     <string name="level">level</string>
     <string name="avgSig">average signal</string>
-
+    <string name="security">security</string>
+    <string name="channel">channel</string>
+    <string name="ten">10</string>
 </resources>

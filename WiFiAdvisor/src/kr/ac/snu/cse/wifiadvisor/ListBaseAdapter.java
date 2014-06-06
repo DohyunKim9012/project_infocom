@@ -10,35 +10,33 @@ import android.widget.TextView;
 
 public class ListBaseAdapter extends BaseAdapter {
 	private ArrayList<WiFiModel> scanResultList;
+	private int measuredTime;
 	private LayoutInflater inflater;
     
-    public ListBaseAdapter(Context context, ArrayList<WiFiModel> scanResultList) {
-    	this.scanResultList = scanResultList;
-
+    public ListBaseAdapter(Context context) {
+    	this.scanResultList = new ArrayList<WiFiModel>();
+    	this.measuredTime = 0;
+    	
 		inflater = LayoutInflater.from(context);
     }
 
 	@Override
 	public int getCount() {
-		// TODO Auto-generated method stub
 		return scanResultList.size();
 	}
 
 	@Override
 	public Object getItem(int position) {
-		// TODO Auto-generated method stub
 		return scanResultList.get(position);
 	}
 
 	@Override
 	public long getItemId(int position) {
-		// TODO Auto-generated method stub
 		return position;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		// TODO Auto-generated method stub
 		View v = convertView;
 		ViewHolder viewHolder = new ViewHolder();
 		
@@ -50,6 +48,8 @@ public class ListBaseAdapter extends BaseAdapter {
 			viewHolder.frequency = (TextView) v.findViewById(R.id.frequency);
 			viewHolder.level = (TextView) v.findViewById(R.id.level);
 			viewHolder.avgSignal = (TextView) v.findViewById(R.id.avgSig);
+			viewHolder.security = (TextView) v.findViewById(R.id.security);
+			viewHolder.channel = (TextView) v.findViewById(R.id.channel);
 			
 			v.setTag(viewHolder);
 		} else {
@@ -63,19 +63,21 @@ public class ListBaseAdapter extends BaseAdapter {
 			viewHolder.level.setText("level : ");
 		else
 			viewHolder.level.setText("level : " + ((WiFiModel) getItem(position)).getLevel() + " dbm");
-		viewHolder.avgSignal.setText("avgSignal : " + ((WiFiModel) getItem(position)).getAvgSignal() + " mW");
+		viewHolder.avgSignal.setText("avgSignal : " + ((WiFiModel) getItem(position)).getAverageSignal(measuredTime) + " mW");
+		viewHolder.security.setText("security : " + ((WiFiModel) getItem(position)).getSecurity());
+		viewHolder.channel.setText("channel : " + ((WiFiModel) getItem(position)).getChannel());
 		
 		return v;
 	}
 
 	@Override
 	public void notifyDataSetChanged() {
-		// TODO Auto-generated method stub
 		super.notifyDataSetChanged();
 	}
 
-	public void setScanResultList(ArrayList<WiFiModel> scanResultList) {
+	public void setScanResultList(ArrayList<WiFiModel> scanResultList, int measuredTime) {
 		this.scanResultList = scanResultList;
+		this.measuredTime = measuredTime;
 	}
 
 	class ViewHolder{
@@ -84,6 +86,8 @@ public class ListBaseAdapter extends BaseAdapter {
 		private TextView frequency = null;
 		private TextView level = null;
 		private TextView avgSignal = null;
+		private TextView security = null;
+		private TextView channel = null;
 	}
 
 }
