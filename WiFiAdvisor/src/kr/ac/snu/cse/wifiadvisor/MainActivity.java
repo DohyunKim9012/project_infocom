@@ -169,7 +169,7 @@ public class MainActivity extends ListActivity {
 					
 					if (measuredTime >= intervalTime)
 					{
-						stopWiFiService ();
+						wifiService.stopScan();
 					}
 				}
 				
