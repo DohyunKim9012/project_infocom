@@ -33,6 +33,7 @@ public class MainActivity extends ListActivity {
 	private ListBaseAdapter listBaseAdapter;
 	private int measuredTime;
 	private int intervalTime;
+	private long lastScanTime;
 	
 	// User Interfaces
 	private Button stopBtn;
@@ -68,6 +69,7 @@ public class MainActivity extends ListActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		this.stopWiFiService();
 		Log.i("MainActivity", "onDestroy");
 	}
     
@@ -78,14 +80,15 @@ public class MainActivity extends ListActivity {
         
         measuredTime = 0;
         intervalTime = 0;
+        lastScanTime = 0;
                
-        timeText = (EditText)findViewById(R.id.timeintervalBox); 
+        timeText = (EditText)findViewById(R.id.timeintervalBox);
         
         stopBtn = (Button)findViewById(R.id.stopBtn);
         stopBtn.setOnClickListener(new OnClickListener(){
         	@Override
         	public void onClick (View v) {
-       			stopWiFiService ();
+       			wifiService.stopScan();
         	}
         });
         
@@ -106,7 +109,7 @@ public class MainActivity extends ListActivity {
         		
         		if (intervalTime > 0)
         		{
-        			startWiFiService ();
+           			wifiService.startScan();
         		}
         	}
         });
@@ -153,10 +156,11 @@ public class MainActivity extends ListActivity {
 			public void onReceive(Context context, Intent intent) {
 				Log.i("MainActivity", "onResume/BroadcastReceiver/onReceive");
 				
-				if(isBound) {
-					ArrayList<WiFiModel>wifiDataList = updateWifiData(
+				if(isBound && wifiService.getLastScanTime() > lastScanTime) {
+					ArrayList<WiFiModel> wifiDataList = updateWifiData(
 							wifiService.getScanResultList(),
 							wifiService.TIME);
+					lastScanTime = wifiService.getLastScanTime();
 					measuredTime += wifiService.TIME;
 					listBaseAdapter.setScanResultList(wifiDataList, measuredTime);
 					listBaseAdapter.notifyDataSetChanged();
@@ -186,6 +190,8 @@ public class MainActivity extends ListActivity {
 	
 	// Update WiFiModel List by ScanResult List
 	private ArrayList<WiFiModel> updateWifiData(List<ScanResult> scanResults, int time) {
+		Log.i("MainActivity", "onReceive/updateWiFiData");
+
 		for (ScanResult scanResult : scanResults)
 		{
 			String BSSID = scanResult.BSSID;
