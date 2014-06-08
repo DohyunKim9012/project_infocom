@@ -1,6 +1,8 @@
 package kr.ac.snu.cse.wifiadvisor;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -35,10 +37,11 @@ public class MainActivity extends ListActivity {
 	private int intervalTime;
 	private long lastScanTime;
 	
+	// Constants
+	private final int scanTime = 5000;
+	
 	// User Interfaces
-	private Button stopBtn;
 	private Button startBtn;
-	private EditText timeText;
 
 	// Process Life Cycle
 	@Override
@@ -81,36 +84,16 @@ public class MainActivity extends ListActivity {
         measuredTime = 0;
         intervalTime = 0;
         lastScanTime = 0;
-               
-        timeText = (EditText)findViewById(R.id.timeintervalBox);
-        
-        stopBtn = (Button)findViewById(R.id.stopBtn);
-        stopBtn.setOnClickListener(new OnClickListener(){
-        	@Override
-        	public void onClick (View v) {
-       			wifiService.stopScan();
-        	}
-        });
-        
+
         startBtn = (Button)findViewById(R.id.startBtn);
         startBtn.setOnClickListener(new OnClickListener(){
         	@Override
         	public void onClick (View v) {
         		measuredTime = 0;
+        		intervalTime = scanTime;
+        		wifiDictionary.clear();
         		
-        		if (timeText.getText() != null)
-        		{
-        			intervalTime = Integer.parseInt(timeText.getText().toString()) * 1000;
-        		}
-        		else
-        		{
-        			intervalTime = 10000;
-        		}
-        		
-        		if (intervalTime > 0)
-        		{
-           			wifiService.startScan();
-        		}
+        		wifiService.startScan();
         	}
         });
 
@@ -164,12 +147,11 @@ public class MainActivity extends ListActivity {
 					measuredTime += wifiService.TIME;
 					listBaseAdapter.setScanResultList(wifiDataList, measuredTime);
 					listBaseAdapter.notifyDataSetChanged();
-					
-					timeText.setText(""+(intervalTime-measuredTime)/1000);
-					
+										
 					if (measuredTime >= intervalTime)
 					{
 						wifiService.stopScan();
+						evaluateWiFiData ();
 					}
 				}
 				
@@ -208,5 +190,52 @@ public class MainActivity extends ListActivity {
 		}
 		
 		return new ArrayList<WiFiModel>(wifiDictionary.values());
-	}	
+	}
+	
+	// Update WiFiList by output
+	private void evaluateWiFiData ()
+	{
+		ArrayList<WiFiModel> data = listBaseAdapter.getScanResultList();
+		ArrayList<WiFiModel> newData = new ArrayList<WiFiModel>();
+		double[] channelPowers = new double[14];
+		
+		for (int i = 0; i < channelPowers.length; i++)
+		{
+			channelPowers[i] = 1E-10;
+		}
+		
+		for (WiFiModel model : data)
+		{
+			int channel = model.getChannel ();
+			if (channel > 0)
+			{
+				channelPowers[channel-1] += model.getAverageSignal(measuredTime);
+				newData.add(model);
+			}
+		}
+		
+		for (WiFiModel model : newData)
+		{
+			int channel = model.getChannel () - 1;
+			double interferencePower = 0.0d;
+			
+			for (int j = -2; j <= 2; j++ )
+			{
+				int c = channel+j;
+				if (c >= 0 && c <= channelPowers.length && c != channel)
+				{
+					interferencePower += channelPowers[c];
+				}
+			}
+			
+			double logSINR = Math.log10(model.getAverageSignal(measuredTime) / interferencePower);
+			model.setThroughput(
+					Math.max(0.0d, 4.806*logSINR + 13.861));
+		}
+		
+		Collections.sort(newData,new WiFiModel.CompareByThroughput());
+		
+		this.listBaseAdapter.setScanResultList(newData, measuredTime);
+		this.listBaseAdapter.notifyDataSetChanged();
+	}
 }

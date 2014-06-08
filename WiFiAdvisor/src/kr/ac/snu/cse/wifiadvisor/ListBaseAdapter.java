@@ -1,6 +1,9 @@
 package kr.ac.snu.cse.wifiadvisor;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,23 +53,34 @@ public class ListBaseAdapter extends BaseAdapter {
 			viewHolder.avgSignal = (TextView) v.findViewById(R.id.avgSig);
 			viewHolder.security = (TextView) v.findViewById(R.id.security);
 			viewHolder.channel = (TextView) v.findViewById(R.id.channel);
+			viewHolder.throughput = (TextView) v.findViewById(R.id.throughput);
 			
 			v.setTag(viewHolder);
 		} else {
 			viewHolder = (ViewHolder) v.getTag();
 		}
+		NumberFormat formatter = new DecimalFormat("#0.0");
 		
 		viewHolder.ssid.setText("SSID : " + ((WiFiModel) getItem(position)).getSSID());
 		viewHolder.bssid.setText("BSSID : " + ((WiFiModel) getItem(position)).getBSSID());
-		viewHolder.frequency.setText("frequency : " + ((WiFiModel) getItem(position)).getFrequency() + " MHz");
+		viewHolder.frequency.setText("주파수 : " + ((WiFiModel) getItem(position)).getFrequency() + " MHz");
 		if(((WiFiModel) getItem(position)).getLevel() == 0)
-			viewHolder.level.setText("level : ");
+			viewHolder.level.setText("세기  : ");
 		else
-			viewHolder.level.setText("level : " + ((WiFiModel) getItem(position)).getLevel() + " dbm");
-		viewHolder.avgSignal.setText("avgSignal : " + ((WiFiModel) getItem(position)).getAverageSignal(measuredTime) + " mW");
-		viewHolder.security.setText("security : " + ((WiFiModel) getItem(position)).getSecurity());
-		viewHolder.channel.setText("channel : " + ((WiFiModel) getItem(position)).getChannel());
+			viewHolder.level.setText("세기 : " + ((WiFiModel) getItem(position)).getLevel() + " dbm");
+		viewHolder.avgSignal.setText("신호 평균전력  " + ((WiFiModel) getItem(position)).getAverageSignal(measuredTime) + " mW");
+		viewHolder.security.setText("보안방식 : " + ((WiFiModel) getItem(position)).getSecurity());
+		viewHolder.channel.setText("채널 번호 : " + ((WiFiModel) getItem(position)).getChannel());
 		
+		double t = ((WiFiModel) getItem(position)).getThroughput();
+		if (t < 0)
+		{
+			viewHolder.throughput.setText("계산 중");
+		}
+		else
+		{
+			viewHolder.throughput.setText(formatter.format(t)+" Mbps");
+		}
 		return v;
 	}
 
@@ -79,6 +93,11 @@ public class ListBaseAdapter extends BaseAdapter {
 		this.scanResultList = scanResultList;
 		this.measuredTime = measuredTime;
 	}
+	
+	public ArrayList<WiFiModel> getScanResultList ()
+	{
+		return this.scanResultList;
+	}
 
 	class ViewHolder{
 		private TextView ssid = null;
@@ -88,6 +107,7 @@ public class ListBaseAdapter extends BaseAdapter {
 		private TextView avgSignal = null;
 		private TextView security = null;
 		private TextView channel = null;
+		private TextView throughput = null;
 	}
 
 }

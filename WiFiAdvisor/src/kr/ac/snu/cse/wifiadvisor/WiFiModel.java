@@ -1,5 +1,7 @@
 package kr.ac.snu.cse.wifiadvisor;
 
+import java.util.Comparator;
+
 import android.net.wifi.ScanResult;
 
 public class WiFiModel {
@@ -10,6 +12,7 @@ public class WiFiModel {
 	private int frequency;
 	private int level;
 	private int channel;
+	private double throughput;
 
 	private double measuredEnergy; // energy in uJ
 	
@@ -29,6 +32,7 @@ public class WiFiModel {
 		this.frequency = scanResult.frequency;
 		this.level = scanResult.level;
 		this.channel = WiFiModel.getChannelfromFrequency(scanResult.frequency);
+		this.throughput = -1.0d;
 		
 		this.measuredEnergy = 0.0d;
 	}
@@ -48,7 +52,7 @@ public class WiFiModel {
 				break;
 			}
 		}
-		return i;
+		return i+1;
 	}
 	
 	public static String getSecurity (String capability)
@@ -74,6 +78,11 @@ public class WiFiModel {
 		return (measuredTime == 0) ? 0.0d : measuredEnergy/measuredTime;
 	}
 	
+	public void setThroughput (double throughput)
+	{
+		this.throughput = throughput;
+	}
+	
 	// Getter	
 	public String getSSID() {
 		return this.SSID;
@@ -96,5 +105,15 @@ public class WiFiModel {
 	public double getAverageSignal(int measuredTime) {
 		return calculateAverageSignal (measuredTime);
 	}
-
+	public double getThroughput() {
+		return this.throughput;
+	}
+	
+	public static class CompareByThroughput implements Comparator<WiFiModel> {
+		@Override
+		public int compare (WiFiModel m1, WiFiModel m2)
+		{
+			return -Double.compare(m1.getThroughput(), m2.getThroughput());
+		}
+	}
 }

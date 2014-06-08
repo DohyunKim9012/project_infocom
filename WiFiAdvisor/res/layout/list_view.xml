@@ -1,42 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
-    
-    <TextView android:id="@+id/ssid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/ssid" />
-    
-    <TextView android:id="@+id/bssid"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/bssid" />
-    
-    <TextView android:id="@+id/frequency"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/frequency" />
-    
-    <TextView android:id="@+id/channel"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/channel" />
-        
-    <TextView android:id="@+id/security"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/security" />  
-    
-    <TextView android:id="@+id/level"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/level" />
-    
-    <TextView android:id="@+id/avgSig"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/avgSig" />
+    android:layout_height="match_parent">
 
-</LinearLayout>
+	<TextView android:id="@+id/throughput"
+	    android:layout_width="wrap_content"
+	    android:layout_height="match_parent"
+	    android:layout_alignParentRight="true"
+	    android:text="@string/throughput"
+	    android:textSize="30sp"/>
+	
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="vertical"
+	    android:layout_alignParentLeft="true" >
+	    
+	    <TextView android:id="@+id/ssid"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/ssid" />
+	    
+	    <TextView android:id="@+id/bssid"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/bssid" />
+	    
+	    <TextView android:id="@+id/frequency"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/frequency" />
+	    
+	    <TextView android:id="@+id/channel"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/channel" />
+	        
+	    <TextView android:id="@+id/security"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/security" />  
+	    
+	    <TextView android:id="@+id/level"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/level" />
+	    
+	    <TextView android:id="@+id/avgSig"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/avgSig" />
+	
+	</LinearLayout>
+</RelativeLayout>

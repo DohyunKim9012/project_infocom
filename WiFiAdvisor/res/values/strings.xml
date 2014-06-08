@@ -3,10 +3,8 @@
 
     <string name="app_name">WiFiAdvisor</string>
     <string name="hello_world">Hello world!</string>
-    <string name="empty">Null Data</string>
-    <string name="reset">Reset</string>
+    <string name="empty">시작을 눌러주세요</string>
     <string name="start">Start</string>
-    <string name="stop">Stop</string>
     <string name="ssid">SSID</string>
     <string name="bssid">BSSID</string>
     <string name="capabilities">capabilities</string>
@@ -15,5 +13,5 @@
     <string name="avgSig">average signal</string>
     <string name="security">security</string>
     <string name="channel">channel</string>
-    <string name="ten">10</string>
+    <string name="throughput">throughput</string>
 </resources>
