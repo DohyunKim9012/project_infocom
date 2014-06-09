@@ -42,6 +42,8 @@ public class MainActivity extends ListActivity {
 	
 	// User Interfaces
 	private Button startBtn;
+	private Button infiniteStartBtn;
+	private Button stopBtn;
 
 	// Process Life Cycle
 	@Override
@@ -89,6 +91,8 @@ public class MainActivity extends ListActivity {
         startBtn.setOnClickListener(new OnClickListener(){
         	@Override
         	public void onClick (View v) {
+        		wifiService.stopScan ();
+        		
         		measuredTime = 0;
         		intervalTime = scanTime;
         		wifiDictionary.clear();
@@ -96,7 +100,28 @@ public class MainActivity extends ListActivity {
         		wifiService.startScan();
         	}
         });
-
+        
+        infiniteStartBtn = (Button)findViewById(R.id.infiniteStartBtn);
+        infiniteStartBtn.setOnClickListener(new OnClickListener(){
+        	@Override
+        	public void onClick (View v) {
+        		wifiService.stopScan ();
+        		
+        		measuredTime = 0;
+        		intervalTime = Integer.MAX_VALUE;
+        		wifiDictionary.clear ();
+        		
+        		wifiService.startScan();
+        	}
+        });
+        
+        stopBtn =(Button)findViewById(R.id.stopBtn);
+        stopBtn.setOnClickListener(new OnClickListener (){
+        	@Override
+        	public void onClick (View v) {
+        		wifiService.stopScan();
+        	}
+        });
         
     	// Defines callback for service binding, passed to bindService()
         wifiServiceConnection = new ServiceConnection() {
@@ -146,12 +171,11 @@ public class MainActivity extends ListActivity {
 					lastScanTime = wifiService.getLastScanTime();
 					measuredTime += wifiService.TIME;
 					listBaseAdapter.setScanResultList(wifiDataList, measuredTime);
-					listBaseAdapter.notifyDataSetChanged();
-										
+					evaluateWiFiData ();
+					
 					if (measuredTime >= intervalTime)
 					{
 						wifiService.stopScan();
-						evaluateWiFiData ();
 					}
 				}
 				
@@ -209,30 +233,9 @@ public class MainActivity extends ListActivity {
 			int channel = model.getChannel ();
 			if (channel > 0)
 			{
-				WiFiModel dupModel = null;
-				channelPowers[channel-1] += model.getAverageSignal(measuredTime);
-				
-				for (WiFiModel iModel : newData)
-				{
-					if (iModel.getSSID().compareTo(model.getSSID()) == 0)
-						dupModel = iModel;
-				}
-				
-				if (dupModel == null)
-				{
-					newData.add(model);
-				}
-				else
-				{
-					double dupPower = dupModel.getAverageSignal(measuredTime);
-					double modelPower = model.getAverageSignal(measuredTime);
-					
-					if (dupPower < modelPower)
-					{
-						newData.remove(dupModel);
-						newData.add(model);
-					}
-				}
+				channelPowers[channel-1] += model.getAverageSignal(measuredTime);				
+
+				newData.add(model);
 			}
 		}
 		
