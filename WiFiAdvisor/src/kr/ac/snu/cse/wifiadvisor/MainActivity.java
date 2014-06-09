@@ -247,7 +247,7 @@ public class MainActivity extends ListActivity {
 			for (int j = -2; j <= 2; j++ )
 			{
 				int c = channel+j;
-				if (c >= 0 && c <= channelPowers.length && c != channel)
+				if (c >= 0 && c < channelPowers.length && c != channel)
 				{
 					interferencePower += channelPowers[c];
 				}
