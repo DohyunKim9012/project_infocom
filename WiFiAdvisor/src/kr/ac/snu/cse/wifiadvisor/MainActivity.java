@@ -209,8 +209,30 @@ public class MainActivity extends ListActivity {
 			int channel = model.getChannel ();
 			if (channel > 0)
 			{
+				WiFiModel dupModel = null;
 				channelPowers[channel-1] += model.getAverageSignal(measuredTime);
-				newData.add(model);
+				
+				for (WiFiModel iModel : newData)
+				{
+					if (iModel.getSSID().compareTo(model.getSSID()) == 0)
+						dupModel = iModel;
+				}
+				
+				if (dupModel == null)
+				{
+					newData.add(model);
+				}
+				else
+				{
+					double dupPower = dupModel.getAverageSignal(measuredTime);
+					double modelPower = model.getAverageSignal(measuredTime);
+					
+					if (dupPower < modelPower)
+					{
+						newData.remove(dupModel);
+						newData.add(model);
+					}
+				}
 			}
 		}
 		
@@ -232,6 +254,8 @@ public class MainActivity extends ListActivity {
 			model.setThroughput(
 					Math.max(0.0d, 4.806*logSINR + 13.861));
 		}
+		
+		
 		
 		Collections.sort(newData,new WiFiModel.CompareByThroughput());
 		
